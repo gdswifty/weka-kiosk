@@ -28,6 +28,9 @@
   }
 
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  /* Block any links Wistia injects — this is a kiosk, no navigation out */
+  #app a { pointer-events:none !important; cursor:default !important; }
+  #app a[href] { pointer-events:none !important; }
   html, body {
     width:100vw; height:100vh; overflow:hidden;
     background:var(--bg);
@@ -121,6 +124,9 @@
     cursor:pointer; z-index:10;
     display:flex; align-items:center; justify-content:center;
   }
+  /* Block all Wistia-injected interactive elements in screensaver */
+  #saver-wistia, #saver-wistia * { pointer-events:none !important; }
+  #saver-wistia iframe { pointer-events:none !important; }
 
   /*
   ╔══════════════════════════════════════╗
@@ -459,8 +465,8 @@
       <div class="weka-bg-mask"></div>
     </div>
 
-    <!-- Screensaver Wistia video — muted, looping -->
-    <div id="saver-wistia" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;"></div>
+    <!-- Screensaver Wistia video — muted, looping, no interaction -->
+    <div id="saver-wistia" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;"></div>
 
     <div class="saver-wm">WEKA</div>
 
@@ -953,6 +959,13 @@ startSaverVideo();
   document.addEventListener(e, resetIdle, {passive:true}));
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart', e => e.preventDefault());
+
+// Kiosk lock — prevent ANY link from navigating away
+document.addEventListener('click', e => {
+  const link = e.target.closest('a');
+  if (link) { e.preventDefault(); e.stopPropagation(); }
+}, true);
+
 let _lt = 0;
 document.addEventListener('touchend', e => {
   const n = Date.now(); if (n - _lt < 300) e.preventDefault(); _lt = n;
