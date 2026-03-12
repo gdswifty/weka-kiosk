@@ -362,6 +362,7 @@
     scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
     scrollbar-width:none; display:flex; align-items:stretch;
     gap:16px; padding:0 52px;
+    touch-action:pan-x;
   }
   .carousel::-webkit-scrollbar { display:none; }
 
@@ -410,12 +411,13 @@
   .pe p { font-size:.82rem; }
   .hud {
     position:absolute; bottom:0; left:0; right:0;
-    padding:44px 46px 32px;
+    padding:44px 46px 28px;
     background:linear-gradient(transparent, rgba(23,28,33,.94));
-    display:flex; align-items:flex-end; gap:20px;
+    display:flex; flex-direction:column; gap:16px;
     opacity:0; transition:opacity .35s; z-index:2; pointer-events:none;
   }
   #screen-player.hud-on .hud { opacity:1; pointer-events:all; }
+  .hud-top { display:flex; align-items:flex-end; gap:20px; }
   .hud-back {
     background:rgba(242,242,235,.1); border:1px solid rgba(242,242,235,.18);
     backdrop-filter:blur(12px); border-radius:50px; padding:10px 20px;
@@ -429,6 +431,40 @@
   .hud-meta h2 { font-family:'Onest',sans-serif; font-size:1.2rem; font-weight:500; color:var(--cream); }
   .hud-meta p  { font-size:.75rem; color:rgba(242,242,235,.4); margin-top:4px; }
   .hud-logo { flex-shrink:0; opacity:.45; }
+
+  /* Scrub bar */
+  .hud-scrub {
+    display:flex; align-items:center; gap:12px;
+    width:100%;
+  }
+  .scrub-time {
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.65rem; color:rgba(242,242,235,.5);
+    letter-spacing:.04em; min-width:36px;
+    flex-shrink:0;
+  }
+  #scrub-duration { text-align:right; }
+  .scrub-track {
+    flex:1; height:4px; background:rgba(242,242,235,.15);
+    border-radius:4px; position:relative; cursor:pointer;
+    touch-action:none;
+  }
+  .scrub-track::before {
+    content:''; position:absolute; inset:-10px 0; /* larger tap target */
+  }
+  .scrub-fill {
+    position:absolute; left:0; top:0; height:100%;
+    background:var(--purple); border-radius:4px;
+    width:0%; pointer-events:none;
+    transition:width .1s linear;
+  }
+  .scrub-handle {
+    position:absolute; top:50%; transform:translate(-50%,-50%);
+    width:14px; height:14px; border-radius:50%;
+    background:var(--cream); box-shadow:0 2px 8px rgba(0,0,0,.4);
+    left:0%; pointer-events:none;
+    transition:left .1s linear;
+  }
 
   /* ══════════════════════════════════════
      KEYFRAMES
@@ -598,23 +634,33 @@
       <p>Set a Wistia video ID to enable playback</p>
     </div>
     <div class="hud" id="player-hud">
-      <div class="hud-back" onclick="exitPlayer(event)">← Back</div>
-      <div class="hud-meta">
-        <h2 id="player-title">Title</h2>
-        <p  id="player-sub">Category</p>
+      <div class="hud-top">
+        <div class="hud-back" onclick="exitPlayer(event)">← Back</div>
+        <div class="hud-meta">
+          <h2 id="player-title">Title</h2>
+          <p  id="player-sub">Category</p>
+        </div>
+        <div class="hud-logo">
+          <svg width="80" height="17" viewBox="0 0 739 153" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M161.231 0.0058301H203.721C206.864 0.0058301 209.406 2.55358 209.406 5.69018V48.18C209.406 53.2463 203.278 55.7941 199.687 52.1969L157.209 9.71878C153.629 6.1391 156.165 0 161.226 0L161.231 0.0058301Z" fill="white"/>
+            <path d="M200.841 95.0481L107.641 1.74903C103.933 -1.95891 97.5901 0.652971 97.5901 5.88257V36.7646C97.5901 44.5187 100.663 51.9462 106.154 57.4382L199.349 150.737C203.057 154.445 209.4 151.833 209.4 146.604V115.722C209.4 107.968 206.327 100.54 200.829 95.0481H200.841Z" fill="white"/>
+            <path d="M103.251 95.0481L10.0511 1.74903C6.36064 -1.95891 0 0.652972 0 5.8884V36.7704C0 44.5245 3.07829 51.952 8.57025 57.444L101.764 150.743C105.472 154.451 111.815 151.839 111.815 146.61V115.728C111.815 107.973 108.743 100.546 103.251 95.054V95.0481Z" fill="white"/>
+            <path d="M688.558 29.2205H673.009L629.837 123.155H650.977L660.982 101.211H700.201L710.071 123.155H731.718L688.541 29.2205H688.558ZM669.418 82.4609L680.635 57.8055L691.788 82.4609H669.418Z" fill="white"/>
+            <path d="M593.761 29.238L552.443 71.547V29.238H532.457V123.149H552.443V97.6775L564.873 85.2711L595.417 123.143H620.772L578.947 71.3021L620.836 29.2263H593.767L593.761 29.238Z" fill="white"/>
+            <path d="M456.019 85.3235H502.327V66.3174H456.019V48.1974H507.662V29.1913H436.039V123.149H507.662V104.161H456.019V85.3235Z" fill="white"/>
+            <path d="M380.741 87.4807L361.227 29.2205H345.964L326.451 87.4807L306.139 29.203H284.765L318.592 123.132H333.855L353.392 66.4981L372.841 123.132H388.232L422.076 29.203H401.053L380.741 87.4807Z" fill="white"/>
+            <path d="M731.118 40.9506C731.479 40.4084 731.66 39.7496 731.66 38.9742C731.66 38.1988 731.479 37.5517 731.141 37.0095C730.797 36.4789 730.343 36.0767 729.789 35.8085C729.229 35.5345 728.652 35.4062 728.046 35.4062H722.664V46.2735H725.34V42.618H727.346L729.101 46.2735H732.051L729.917 42.0583C730.395 41.7727 730.809 41.4229 731.13 40.9448H731.118V40.9506ZM725.34 37.3709H727.305C727.655 37.3709 728.005 37.4876 728.325 37.7208C728.652 37.954 728.821 38.3679 728.821 38.9626C728.821 39.5572 728.663 39.942 728.325 40.2277C728.005 40.5134 727.655 40.6533 727.27 40.6533H725.352V37.3709H725.34Z" fill="white"/>
+            <path d="M737.758 36.3857C737.152 34.9631 736.301 33.7096 735.228 32.6252C734.144 31.5408 732.902 30.7013 731.468 30.095C730.045 29.4886 728.524 29.1797 726.879 29.1797C725.235 29.1797 723.725 29.4886 722.303 30.095C720.886 30.7013 719.633 31.5408 718.542 32.6252C717.458 33.7096 716.618 34.9631 716.012 36.3857C715.406 37.8082 715.097 39.3299 715.097 40.9623C715.097 42.5947 715.394 44.1164 716.012 45.5506C716.618 46.9731 717.458 48.2266 718.542 49.311C719.633 50.3954 720.886 51.2349 722.303 51.8413C723.725 52.4476 725.253 52.7566 726.879 52.7566C728.506 52.7566 730.034 52.4476 731.468 51.8413C732.89 51.2349 734.144 50.3837 735.228 49.311C736.313 48.2266 737.152 46.9848 737.758 45.5506C738.371 44.128 738.68 42.6064 738.68 40.9623C738.68 39.3182 738.371 37.8082 737.758 36.3857ZM734.464 45.3815C733.677 46.7108 732.616 47.7718 731.287 48.5589C729.958 49.346 728.494 49.7366 726.879 49.7366C725.265 49.7366 723.789 49.3343 722.46 48.5473C721.131 47.7602 720.082 46.6991 719.283 45.3698C718.496 44.0406 718.093 42.5772 718.093 40.9623C718.093 39.3474 718.496 37.884 719.283 36.5547C720.07 35.2255 721.131 34.1644 722.46 33.3773C723.789 32.5903 725.265 32.1996 726.879 32.1996C728.494 32.1996 729.958 32.5844 731.287 33.3773C732.616 34.1644 733.666 35.2255 734.464 36.5547C735.252 37.884 735.654 39.359 735.654 40.9623C735.654 42.5656 735.252 44.0522 734.464 45.3698V45.3815Z" fill="white"/>
+          </svg>
+        </div>
       </div>
-      <div class="hud-logo">
-        <svg width="80" height="17" viewBox="0 0 739 153" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M161.231 0.0058301H203.721C206.864 0.0058301 209.406 2.55358 209.406 5.69018V48.18C209.406 53.2463 203.278 55.7941 199.687 52.1969L157.209 9.71878C153.629 6.1391 156.165 0 161.226 0L161.231 0.0058301Z" fill="white"/>
-          <path d="M200.841 95.0481L107.641 1.74903C103.933 -1.95891 97.5901 0.652971 97.5901 5.88257V36.7646C97.5901 44.5187 100.663 51.9462 106.154 57.4382L199.349 150.737C203.057 154.445 209.4 151.833 209.4 146.604V115.722C209.4 107.968 206.327 100.54 200.829 95.0481H200.841Z" fill="white"/>
-          <path d="M103.251 95.0481L10.0511 1.74903C6.36064 -1.95891 0 0.652972 0 5.8884V36.7704C0 44.5245 3.07829 51.952 8.57025 57.444L101.764 150.743C105.472 154.451 111.815 151.839 111.815 146.61V115.728C111.815 107.973 108.743 100.546 103.251 95.054V95.0481Z" fill="white"/>
-          <path d="M688.558 29.2205H673.009L629.837 123.155H650.977L660.982 101.211H700.201L710.071 123.155H731.718L688.541 29.2205H688.558ZM669.418 82.4609L680.635 57.8055L691.788 82.4609H669.418Z" fill="white"/>
-          <path d="M593.761 29.238L552.443 71.547V29.238H532.457V123.149H552.443V97.6775L564.873 85.2711L595.417 123.143H620.772L578.947 71.3021L620.836 29.2263H593.767L593.761 29.238Z" fill="white"/>
-          <path d="M456.019 85.3235H502.327V66.3174H456.019V48.1974H507.662V29.1913H436.039V123.149H507.662V104.161H456.019V85.3235Z" fill="white"/>
-          <path d="M380.741 87.4807L361.227 29.2205H345.964L326.451 87.4807L306.139 29.203H284.765L318.592 123.132H333.855L353.392 66.4981L372.841 123.132H388.232L422.076 29.203H401.053L380.741 87.4807Z" fill="white"/>
-          <path d="M731.118 40.9506C731.479 40.4084 731.66 39.7496 731.66 38.9742C731.66 38.1988 731.479 37.5517 731.141 37.0095C730.797 36.4789 730.343 36.0767 729.789 35.8085C729.229 35.5345 728.652 35.4062 728.046 35.4062H722.664V46.2735H725.34V42.618H727.346L729.101 46.2735H732.051L729.917 42.0583C730.395 41.7727 730.809 41.4229 731.13 40.9448H731.118V40.9506ZM725.34 37.3709H727.305C727.655 37.3709 728.005 37.4876 728.325 37.7208C728.652 37.954 728.821 38.3679 728.821 38.9626C728.821 39.5572 728.663 39.942 728.325 40.2277C728.005 40.5134 727.655 40.6533 727.27 40.6533H725.352V37.3709H725.34Z" fill="white"/>
-          <path d="M737.758 36.3857C737.152 34.9631 736.301 33.7096 735.228 32.6252C734.144 31.5408 732.902 30.7013 731.468 30.095C730.045 29.4886 728.524 29.1797 726.879 29.1797C725.235 29.1797 723.725 29.4886 722.303 30.095C720.886 30.7013 719.633 31.5408 718.542 32.6252C717.458 33.7096 716.618 34.9631 716.012 36.3857C715.406 37.8082 715.097 39.3299 715.097 40.9623C715.097 42.5947 715.394 44.1164 716.012 45.5506C716.618 46.9731 717.458 48.2266 718.542 49.311C719.633 50.3954 720.886 51.2349 722.303 51.8413C723.725 52.4476 725.253 52.7566 726.879 52.7566C728.506 52.7566 730.034 52.4476 731.468 51.8413C732.89 51.2349 734.144 50.3837 735.228 49.311C736.313 48.2266 737.152 46.9848 737.758 45.5506C738.371 44.128 738.68 42.6064 738.68 40.9623C738.68 39.3182 738.371 37.8082 737.758 36.3857ZM734.464 45.3815C733.677 46.7108 732.616 47.7718 731.287 48.5589C729.958 49.346 728.494 49.7366 726.879 49.7366C725.265 49.7366 723.789 49.3343 722.46 48.5473C721.131 47.7602 720.082 46.6991 719.283 45.3698C718.496 44.0406 718.093 42.5772 718.093 40.9623C718.093 39.3474 718.496 37.884 719.283 36.5547C720.07 35.2255 721.131 34.1644 722.46 33.3773C723.789 32.5903 725.265 32.1996 726.879 32.1996C728.494 32.1996 729.958 32.5844 731.287 33.3773C732.616 34.1644 733.666 35.2255 734.464 36.5547C735.252 37.884 735.654 39.359 735.654 40.9623C735.654 42.5656 735.252 44.0522 734.464 45.3698V45.3815Z" fill="white"/>
-        </svg>
+      <div class="hud-scrub" onclick="event.stopPropagation()">
+        <span class="scrub-time" id="scrub-current">0:00</span>
+        <div class="scrub-track" id="scrub-track">
+          <div class="scrub-fill" id="scrub-fill"></div>
+          <div class="scrub-handle" id="scrub-handle"></div>
+        </div>
+        <span class="scrub-time" id="scrub-duration">0:00</span>
       </div>
     </div>
   </div>
@@ -678,7 +724,7 @@ async function fetchWistiaOEmbed(wistiaId) {
   try {
     const r = await fetch(`https://fast.wistia.com/oembed?url=https://wekaio.wistia.com/medias/${wistiaId}`);
     const d = await r.json();
-    const dur = d.duration ? formatDur(d.duration) : null;
+    const dur = d.duration ? fmtTime(d.duration) : null;
     oEmbedCache[wistiaId] = { thumb: d.thumbnail_url || null, dur };
     return oEmbedCache[wistiaId];
   } catch(e) {
@@ -686,7 +732,7 @@ async function fetchWistiaOEmbed(wistiaId) {
   }
 }
 
-function formatDur(secs) {
+function fmtTime(secs) {
   const m = Math.floor(secs / 60);
   const s = Math.round(secs % 60);
   return m + ':' + String(s).padStart(2, '0');
@@ -849,6 +895,21 @@ function playVid(v, catTitle) {
       video.bind('play',  () => { videoPlaying = true;  clearTimeout(idleTimer); });
       video.bind('pause', () => { videoPlaying = false; resetIdle(); });
       video.bind('end',   () => { videoPlaying = false; resetIdle(); showHUD(); });
+
+      // Scrub bar — update on time change
+      const dur = video.duration();
+      document.getElementById('scrub-duration').textContent = fmtTime(dur);
+      document.getElementById('scrub-current').textContent = '0:00';
+      document.getElementById('scrub-fill').style.width = '0%';
+      document.getElementById('scrub-handle').style.left = '0%';
+
+      video.bind('timechange', t => {
+        if (isScrubbing) return;
+        const pct = (t / dur) * 100;
+        document.getElementById('scrub-current').textContent = fmtTime(t);
+        document.getElementById('scrub-fill').style.width = pct + '%';
+        document.getElementById('scrub-handle').style.left = pct + '%';
+      });
     }
   });
 
@@ -886,6 +947,52 @@ function showHUD() {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  SCRUB BAR
+// ─────────────────────────────────────────────────────────────
+let isScrubbing = false;
+
+function seekToPosition(clientX) {
+  if (!wistiaPlayer) return;
+  const track = document.getElementById('scrub-track');
+  const rect = track.getBoundingClientRect();
+  let pct = (clientX - rect.left) / rect.width;
+  pct = Math.max(0, Math.min(1, pct));
+  const dur = wistiaPlayer.duration();
+  const t = pct * dur;
+  wistiaPlayer.time(t);
+  document.getElementById('scrub-current').textContent = fmtTime(t);
+  document.getElementById('scrub-fill').style.width = (pct * 100) + '%';
+  document.getElementById('scrub-handle').style.left = (pct * 100) + '%';
+}
+
+// Tap to seek
+document.getElementById('scrub-track').addEventListener('click', e => {
+  e.stopPropagation();
+  seekToPosition(e.clientX);
+  showHUD();
+});
+
+// Touch drag to scrub
+document.getElementById('scrub-track').addEventListener('touchstart', e => {
+  e.stopPropagation();
+  isScrubbing = true;
+  clearTimeout(hudTimer); // keep HUD visible while scrubbing
+  seekToPosition(e.touches[0].clientX);
+}, {passive:false});
+
+document.addEventListener('touchmove', e => {
+  if (!isScrubbing) return;
+  e.preventDefault();
+  seekToPosition(e.touches[0].clientX);
+}, {passive:false});
+
+document.addEventListener('touchend', e => {
+  if (!isScrubbing) return;
+  isScrubbing = false;
+  showHUD(); // restart auto-hide timer
+});
+
+// ─────────────────────────────────────────────────────────────
 //  IDLE / SCREENSAVER
 // ─────────────────────────────────────────────────────────────
 function resetIdle() {
@@ -903,7 +1010,7 @@ function resetIdle() {
 //  SCREENSAVER WISTIA VIDEO
 //  Plays muted + looping in the background of the screensaver.
 // ─────────────────────────────────────────────────────────────
-const SAVER_WISTIA_ID = 't2u0lsszyj';
+const SAVER_WISTIA_ID = 'md392sqi65';
 let saverPlayer = null;
 
 function startSaverVideo() {
@@ -966,9 +1073,19 @@ document.addEventListener('click', e => {
   if (link) { e.preventDefault(); e.stopPropagation(); }
 }, true);
 
-let _lt = 0;
+let _lt = 0, _lx = 0, _ly = 0;
+document.addEventListener('touchstart', e => {
+  _lx = e.touches[0].clientX;
+  _ly = e.touches[0].clientY;
+}, {passive:true});
 document.addEventListener('touchend', e => {
-  const n = Date.now(); if (n - _lt < 300) e.preventDefault(); _lt = n;
+  const n = Date.now();
+  // Only block double-tap if finger didn't move (not a swipe)
+  const dx = Math.abs(e.changedTouches[0].clientX - _lx);
+  const dy = Math.abs(e.changedTouches[0].clientY - _ly);
+  const isStationary = dx < 15 && dy < 15;
+  if (n - _lt < 300 && isStationary) e.preventDefault();
+  _lt = n;
 }, {passive:false});
 </script>
 </body>
