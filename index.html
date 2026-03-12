@@ -358,7 +358,7 @@
     flex-shrink:0; position:relative; z-index:1;
     animation:fadeUp .4s var(--ease) .1s both;
   }
-  .carousel-wrap { flex:1; min-height:0; overflow:hidden; padding:16px 0 20px; position:relative; z-index:1; display:flex; align-items:center; }
+  .carousel-wrap { flex:1; min-height:0; overflow:hidden; padding:16px 0 20px; position:relative; z-index:1; display:flex; align-items:center; touch-action:pan-x; }
   .carousel {
     height:auto; width:100%; overflow-x:auto; overflow-y:hidden;
     scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
@@ -467,6 +467,14 @@
     background:var(--cream); box-shadow:0 2px 8px rgba(0,0,0,.4);
     left:0%; pointer-events:none;
     transition:left .1s linear;
+  }
+
+  /* Version label */
+  #version-label {
+    position:fixed; bottom:6px; right:10px; z-index:9998;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.5rem; color:rgba(242,242,235,.15);
+    letter-spacing:.05em; pointer-events:none;
   }
 
   /* ══════════════════════════════════════
@@ -667,6 +675,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Version label -->
+  <div id="version-label">v10</div>
 
 </div>
 
@@ -995,25 +1006,31 @@ document.getElementById('scrub-track').addEventListener('click', e => {
   showHUD();
 });
 
-// Touch drag to scrub
-document.getElementById('scrub-track').addEventListener('touchstart', e => {
+// Touch drag to scrub — handlers on track element only, not document
+const scrubTrackEl = document.getElementById('scrub-track');
+scrubTrackEl.addEventListener('touchstart', e => {
   e.stopPropagation();
   isScrubbing = true;
   clearTimeout(hudTimer); // keep HUD visible while scrubbing
   seekToPosition(e.touches[0].clientX);
 }, {passive:false});
 
-document.addEventListener('touchmove', e => {
+scrubTrackEl.addEventListener('touchmove', e => {
   if (!isScrubbing) return;
   e.preventDefault();
   seekToPosition(e.touches[0].clientX);
 }, {passive:false});
 
-document.addEventListener('touchend', e => {
+scrubTrackEl.addEventListener('touchend', e => {
   if (!isScrubbing) return;
   isScrubbing = false;
   showHUD(); // restart auto-hide timer
 });
+
+// Fallback: if touch drifts off the track, end scrubbing
+document.addEventListener('touchend', () => {
+  if (isScrubbing) { isScrubbing = false; showHUD(); }
+}, {passive:true});
 
 // ─────────────────────────────────────────────────────────────
 //  IDLE / SCREENSAVER
