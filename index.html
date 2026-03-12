@@ -299,28 +299,6 @@
   }
   .cc:active .c-cta { background:#9B2FF8; gap:10px; transform:scale(.97); }
 
-  /* ══ RESET / HOME BUTTON ══ */
-  .reset-btn {
-    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
-    display:flex; align-items:center; gap:8px;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:.58rem; letter-spacing:.12em; text-transform:uppercase;
-    color:var(--muted);
-    background:var(--subtle); border:1px solid var(--border);
-    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    padding:8px 18px 8px 14px;
-    border-radius:9999px;
-    cursor:pointer; z-index:2; flex-shrink:0;
-    transition:background .2s, color .2s, transform .2s, border-color .2s;
-    -webkit-user-select:none; user-select:none;
-  }
-  .reset-btn:active {
-    background:rgba(242,242,235,.1);
-    border-color:rgba(242,242,235,.18);
-    color:var(--cream);
-    transform:translateX(-50%) scale(.95);
-  }
-  .reset-btn svg { flex-shrink:0; }
   #screen-category { }
 
   .cat-hdr {
@@ -365,6 +343,10 @@
     gap:16px; padding:0 52px;
     will-change:transform;
     transition:transform .35s cubic-bezier(0.16,1,0.3,1);
+  }
+  /* Invisible spacer after last card for right-side breathing room */
+  .carousel::after {
+    content:''; flex-shrink:0; width:36px;
   }
 
   .vc {
@@ -411,23 +393,31 @@
   .pei { font-size:3rem; opacity:.25; }
   .pe p { font-size:.82rem; }
   .hud {
+    position:absolute; inset:0;
+    opacity:0; transition:opacity .35s; z-index:2; pointer-events:none;
+  }
+  #screen-player.hud-on .hud { opacity:1; pointer-events:all; }
+
+  /* Back button — top-left, matching category header position */
+  .hud-back {
+    position:absolute; top:28px; left:52px;
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(242,242,235,.1); border:1px solid rgba(242,242,235,.18);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    font-size:.9rem; color:var(--cream); line-height:1;
+    transition:background .2s, transform .2s;
+  }
+  .hud-back:active { background:rgba(242,242,235,.2); transform:scale(.9); }
+
+  /* Bottom strip: meta + scrub */
+  .hud-bottom {
     position:absolute; bottom:0; left:0; right:0;
     padding:44px 46px 28px;
     background:linear-gradient(transparent, rgba(23,28,33,.94));
     display:flex; flex-direction:column; gap:16px;
-    opacity:0; transition:opacity .35s; z-index:2; pointer-events:none;
   }
-  #screen-player.hud-on .hud { opacity:1; pointer-events:all; }
-  .hud-top { display:flex; align-items:flex-end; gap:20px; }
-  .hud-back {
-    background:rgba(242,242,235,.1); border:1px solid rgba(242,242,235,.18);
-    backdrop-filter:blur(12px); border-radius:50px; padding:10px 20px;
-    cursor:pointer; display:flex; align-items:center; gap:8px;
-    font-family:'IBM Plex Mono',monospace; font-size:.68rem;
-    letter-spacing:.08em; text-transform:uppercase; color:var(--cream); flex-shrink:0;
-    transition:background .2s, transform .2s;
-  }
-  .hud-back:active { background:rgba(242,242,235,.2); transform:scale(.96); }
+  .hud-meta-row { display:flex; align-items:flex-end; gap:20px; }
   .hud-meta { flex:1; }
   .hud-meta h2 { font-family:'Onest',sans-serif; font-size:1.2rem; font-weight:500; color:var(--cream); }
   .hud-meta p  { font-size:.75rem; color:rgba(242,242,235,.4); margin-top:4px; }
@@ -469,9 +459,9 @@
 
   /* Version label */
   #version-label {
-    position:fixed; bottom:6px; right:10px; z-index:9998;
+    position:fixed; bottom:12px; right:20px; z-index:9998;
     font-family:'IBM Plex Mono',monospace;
-    font-size:.5rem; color:rgba(242,242,235,.15);
+    font-size:.5rem; color:rgba(242,242,235,.25);
     letter-spacing:.05em; pointer-events:none;
   }
 
@@ -597,14 +587,6 @@
           <div class="c-cta">Watch now <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5" stroke="#F2F2EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
       </div>
-      <!-- Reset to screensaver -->
-      <button class="reset-btn" onclick="goSaver()">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M7 1.5C4.515 1.5 2.5 3.515 2.5 6S4.515 10.5 7 10.5c1.74 0 3.26-.99 4.02-2.44" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-          <path d="M10.5 1.5v3h-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Restart
-      </button>
     </div>
   </div>
   <div id="screen-category" class="screen">
@@ -623,14 +605,6 @@
     <div class="carousel-wrap">
       <div class="carousel" id="carousel"></div>
     </div>
-    <!-- Reset to screensaver -->
-    <button class="reset-btn" onclick="goSaver()">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M7 1.5C4.515 1.5 2.5 3.515 2.5 6S4.515 10.5 7 10.5c1.74 0 3.26-.99 4.02-2.44" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        <path d="M10.5 1.5v3h-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Restart
-    </button>
   </div>
 
 
@@ -643,13 +617,14 @@
       <p>Set a Wistia video ID to enable playback</p>
     </div>
     <div class="hud" id="player-hud">
-      <div class="hud-top">
-        <div class="hud-back" onclick="exitPlayer(event)">← Back</div>
-        <div class="hud-meta">
-          <h2 id="player-title">Title</h2>
-          <p  id="player-sub">Category</p>
-        </div>
-        <div class="hud-logo">
+      <div class="hud-back" onclick="exitPlayer(event)">←</div>
+      <div class="hud-bottom">
+        <div class="hud-meta-row">
+          <div class="hud-meta">
+            <h2 id="player-title">Title</h2>
+            <p  id="player-sub">Category</p>
+          </div>
+          <div class="hud-logo">
           <svg width="80" height="17" viewBox="0 0 739 153" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M161.231 0.0058301H203.721C206.864 0.0058301 209.406 2.55358 209.406 5.69018V48.18C209.406 53.2463 203.278 55.7941 199.687 52.1969L157.209 9.71878C153.629 6.1391 156.165 0 161.226 0L161.231 0.0058301Z" fill="white"/>
             <path d="M200.841 95.0481L107.641 1.74903C103.933 -1.95891 97.5901 0.652971 97.5901 5.88257V36.7646C97.5901 44.5187 100.663 51.9462 106.154 57.4382L199.349 150.737C203.057 154.445 209.4 151.833 209.4 146.604V115.722C209.4 107.968 206.327 100.54 200.829 95.0481H200.841Z" fill="white"/>
@@ -661,21 +636,22 @@
             <path d="M731.118 40.9506C731.479 40.4084 731.66 39.7496 731.66 38.9742C731.66 38.1988 731.479 37.5517 731.141 37.0095C730.797 36.4789 730.343 36.0767 729.789 35.8085C729.229 35.5345 728.652 35.4062 728.046 35.4062H722.664V46.2735H725.34V42.618H727.346L729.101 46.2735H732.051L729.917 42.0583C730.395 41.7727 730.809 41.4229 731.13 40.9448H731.118V40.9506ZM725.34 37.3709H727.305C727.655 37.3709 728.005 37.4876 728.325 37.7208C728.652 37.954 728.821 38.3679 728.821 38.9626C728.821 39.5572 728.663 39.942 728.325 40.2277C728.005 40.5134 727.655 40.6533 727.27 40.6533H725.352V37.3709H725.34Z" fill="white"/>
             <path d="M737.758 36.3857C737.152 34.9631 736.301 33.7096 735.228 32.6252C734.144 31.5408 732.902 30.7013 731.468 30.095C730.045 29.4886 728.524 29.1797 726.879 29.1797C725.235 29.1797 723.725 29.4886 722.303 30.095C720.886 30.7013 719.633 31.5408 718.542 32.6252C717.458 33.7096 716.618 34.9631 716.012 36.3857C715.406 37.8082 715.097 39.3299 715.097 40.9623C715.097 42.5947 715.394 44.1164 716.012 45.5506C716.618 46.9731 717.458 48.2266 718.542 49.311C719.633 50.3954 720.886 51.2349 722.303 51.8413C723.725 52.4476 725.253 52.7566 726.879 52.7566C728.506 52.7566 730.034 52.4476 731.468 51.8413C732.89 51.2349 734.144 50.3837 735.228 49.311C736.313 48.2266 737.152 46.9848 737.758 45.5506C738.371 44.128 738.68 42.6064 738.68 40.9623C738.68 39.3182 738.371 37.8082 737.758 36.3857ZM734.464 45.3815C733.677 46.7108 732.616 47.7718 731.287 48.5589C729.958 49.346 728.494 49.7366 726.879 49.7366C725.265 49.7366 723.789 49.3343 722.46 48.5473C721.131 47.7602 720.082 46.6991 719.283 45.3698C718.496 44.0406 718.093 42.5772 718.093 40.9623C718.093 39.3474 718.496 37.884 719.283 36.5547C720.07 35.2255 721.131 34.1644 722.46 33.3773C723.789 32.5903 725.265 32.1996 726.879 32.1996C728.494 32.1996 729.958 32.5844 731.287 33.3773C732.616 34.1644 733.666 35.2255 734.464 36.5547C735.252 37.884 735.654 39.359 735.654 40.9623C735.654 42.5656 735.252 44.0522 734.464 45.3698V45.3815Z" fill="white"/>
           </svg>
+          </div>
         </div>
-      </div>
-      <div class="hud-scrub" onclick="event.stopPropagation()">
-        <span class="scrub-time" id="scrub-current">0:00</span>
-        <div class="scrub-track" id="scrub-track">
-          <div class="scrub-fill" id="scrub-fill"></div>
-          <div class="scrub-handle" id="scrub-handle"></div>
+        <div class="hud-scrub" onclick="event.stopPropagation()">
+          <span class="scrub-time" id="scrub-current">0:00</span>
+          <div class="scrub-track" id="scrub-track">
+            <div class="scrub-fill" id="scrub-fill"></div>
+            <div class="scrub-handle" id="scrub-handle"></div>
+          </div>
+          <span class="scrub-time" id="scrub-duration">0:00</span>
         </div>
-        <span class="scrub-time" id="scrub-duration">0:00</span>
       </div>
     </div>
   </div>
 
   <!-- Version label -->
-  <div id="version-label">v12</div>
+  <div id="version-label">v13</div>
 
 </div>
 
