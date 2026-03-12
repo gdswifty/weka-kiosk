@@ -36,7 +36,7 @@
     background:var(--bg);
     font-family:'IBM Plex Sans',sans-serif;
     color:var(--cream);
-    touch-action:manipulation;
+    touch-action:pan-x pan-y;
     -webkit-font-smoothing:antialiased;
   }
 
@@ -358,7 +358,7 @@
     flex-shrink:0; position:relative; z-index:1;
     animation:fadeUp .4s var(--ease) .1s both;
   }
-  .carousel-wrap { flex:1; min-height:0; overflow:hidden; padding:16px 0 20px; position:relative; z-index:1; display:flex; align-items:center; touch-action:pan-x; }
+  .carousel-wrap { flex:1; min-height:0; overflow:visible; padding:16px 0 20px; position:relative; z-index:1; display:flex; align-items:center; }
   .carousel {
     height:auto; width:100%; overflow-x:auto; overflow-y:hidden;
     scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
@@ -379,16 +379,15 @@
     display:flex; flex-direction:column; align-self:center;
     transition:transform .3s var(--ease), border-color .25s, box-shadow .3s;
     animation:fadeUp .4s var(--ease) both;
-    touch-action:pan-x;
   }
-  .vc:active {
+  .vc.tapped {
     transform:scale(.96);
     border-color:rgba(124,3,236,.5);
     box-shadow:0 0 0 1px rgba(124,3,236,.2), 0 12px 40px rgba(0,0,0,.5);
   }
   .vt { width:100%; aspect-ratio:16/9; background:var(--bg-card); position:relative; overflow:hidden; flex-shrink:0; }
   .vt img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; }
-  .vc:active .vt img { transform:scale(1.04); }
+  .vc.tapped .vt img { transform:scale(1.04); }
   .tf { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; opacity:.18; }
   .pl { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(23,28,33,.3); }
   .pc { width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,0,0,.4); }
@@ -677,7 +676,7 @@
   </div>
 
   <!-- Version label -->
-  <div id="version-label">v10</div>
+  <div id="version-label">v11</div>
 
 </div>
 
@@ -826,9 +825,9 @@ async function buildCarousel(cat) {
       const dx = Math.abs(e.changedTouches[0].clientX - startX);
       const dy = Math.abs(e.changedTouches[0].clientY - startY);
       const dt = Date.now() - startTime;
-      // Only count as tap if finger moved <15px and held <400ms
       if (dx < 15 && dy < 15 && dt < 400) {
-        playVid(v, cat.title);
+        card.classList.add('tapped');
+        setTimeout(() => { card.classList.remove('tapped'); playVid(v, cat.title); }, 120);
       }
     }, {passive:true});
     // Keep click for desktop/mouse
