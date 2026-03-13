@@ -561,11 +561,11 @@
 
       <div class="cards">
         <div class="cc cc-1" onclick="goToCategory(0)">
-          <span class="c-badge">4 Videos</span>
+          <span class="c-badge">5 Videos</span>
           <div>
             <div class="c-icon ci-1">⚡</div>
-            <div class="c-ti">WEKA Product</div>
-            <div class="c-de">Demos, deep dives, and walkthroughs of the WEKA platform in action.</div>
+            <div class="c-ti">WEKA Products & Solutions</div>
+            <div class="c-de">Get to know WEKA's NeuralMesh products and solutions.</div>
           </div>
           <div class="c-cta">Watch now <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5" stroke="#F2F2EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
@@ -574,7 +574,7 @@
           <div>
             <div class="c-icon ci-2">🏆</div>
             <div class="c-ti">Customer Stories</div>
-            <div class="c-de">Real results from real teams — how WEKA customers transformed their workflows.</div>
+            <div class="c-de">Ready to be inspired? Meet a few WEKA customers who are doing big things with NeuralMesh.</div>
           </div>
           <div class="c-cta">Watch now <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5" stroke="#F2F2EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
@@ -583,7 +583,7 @@
           <div>
             <div class="c-icon ci-3">✨</div>
             <div class="c-ti">Just for Fun</div>
-            <div class="c-de">Behind the scenes, culture moments, and the lighter side of WEKA.</div>
+            <div class="c-de">Get ready to smile: Welcome to the Whimsy Factory. This is our happy place. 😊</div>
           </div>
           <div class="c-cta">Watch now <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5" stroke="#F2F2EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
@@ -652,7 +652,7 @@
   </div>
 
   <!-- Version label -->
-  <div id="version-label">v14</div>
+  <div id="version-label">v15</div>
 
 </div>
 
@@ -665,31 +665,32 @@
 // ─────────────────────────────────────────────────────────────
 const CATS = [
   {
-    title:"WEKA Product", icon:"⚡", iconCls:"c-icon ci-1",
+    title:"WEKA Products & Solutions", icon:"⚡", iconCls:"c-icon ci-1",
     vids:[
-      {title:"NeuralMesh by WEKA: AI Storage Rebuilt for Real-World Scale", sub:"Platform Overview", dur:"—", wistiaId:"0qqpqbeozj"},
-      {title:"Inference at Scale: Get to Agentic AI with NeuralMesh",      sub:"Agentic AI",        dur:"—", wistiaId:"hxhthzdm4c"},
-      {title:"Navigate the Memory Shortage with NeuralMesh",               sub:"NeuralMesh",        dur:"1:30", wistiaId:"bztutf9890"},
-      {title:"AIDP",                                                        sub:"Coming Soon",       dur:"—", wistiaId:"placeholder_aidp"},
+      {title:"Get to Know NeuralMesh by WEKA",                    sub:"Platform Overview",    dur:"—", wistiaId:"0qqpqbeozj"},
+      {title:"How It Works: NeuralMesh Architecture Deep Dive",    sub:"Architecture",         dur:"—", wistiaId:"lqr2djp5nb"},
+      {title:"Meet the New NeuralMesh AIDP for NVIDIA SDX",        sub:"AIDP",                 dur:"—", wistiaId:"0jyav9zrsu"},
+      {title:"Solving the Inference Labyrinth",                    sub:"Inference",            dur:"—", wistiaId:"hxhthzdm4c"},
+      {title:"Navigating the Memory Shortage",                     sub:"NeuralMesh",           dur:"—", wistiaId:"bztutf9890"},
     ]
   },
   {
     title:"Customer Stories", icon:"🏆", iconCls:"c-icon ci-2",
     vids:[
-      {title:"How Luma AI Accelerates Every Experiment with WEKA",                          sub:"Luma AI",           dur:"—", wistiaId:"f91vb87imt"},
-      {title:"Behind the Magic: Dead & Company's 'Forever Dead' Residency",                 sub:"The Impossibles",   dur:"—", wistiaId:"xuguyf1b5c"},
-      {title:"Picture Shop",                                                                 sub:"The Impossibles",   dur:"—", wistiaId:"b2e8yuetq1"},
-      {title:"U2 x WEKA: Powering the Impossible at Sphere Las Vegas",                      sub:"The Impossibles",   dur:"—", wistiaId:"0rnhl03pel"},
-      {title:"Rubin Observatory: Revolutionizing Astronomy with Big Data and WEKA",          sub:"The Impossibles",   dur:"—", wistiaId:"evedp6gsm2"},
+      {title:"Luma AI: Powering Multimodal AGI",                              sub:"Luma AI",             dur:"—", wistiaId:"f91vb87imt"},
+      {title:"U2 at Sphere: Scaling The Impossible",                          sub:"The Impossibles",     dur:"—", wistiaId:"0rnhl03pel"},
+      {title:"Picture Shop: Mastering Color Science",                         sub:"The Impossibles",     dur:"—", wistiaId:"b2e8yuetq1"},
+      {title:"Dead & Co at Sphere: Behind the Magic",                         sub:"The Impossibles",     dur:"—", wistiaId:"xuguyf1b5c"},
+      {title:"Rubin Observatory: Exploring the Mysteries of Our Universe",    sub:"The Impossibles",     dur:"—", wistiaId:"evedp6gsm2"},
     ]
   },
   {
     title:"Just for Fun", icon:"✨", iconCls:"c-icon ci-3",
     vids:[
-      {title:"With NeuralMesh — the Truth Becomes Clear", sub:"Fun",       dur:"—", wistiaId:"u2j2gocukv"},
-      {title:"The Joy of Data",                            sub:"SKO 2027", dur:"—", wistiaId:"hoh5b2jhhu"},
-      {title:"Saturday Night WEKA",                        sub:"SKO 2027", dur:"—", wistiaId:"ljxuyrfsb2"},
-      {title:"The WEKA Bar",                               sub:"SKO 2027", dur:"—", wistiaId:"0ihou1nhfx"},
+      {title:"The Truth Is Out There",       sub:"Fun",       dur:"—", wistiaId:"u2j2gocukv"},
+      {title:"The Joy of Building AI",       sub:"SKO 2027", dur:"—", wistiaId:"hoh5b2jhhu"},
+      {title:"Memory Shortage Fever",        sub:"SKO 2027", dur:"—", wistiaId:"ljxuyrfsb2"},
+      {title:"Behold, The WEKA Bar",         sub:"SKO 2027", dur:"—", wistiaId:"0ihou1nhfx"},
     ]
   }
 ];
