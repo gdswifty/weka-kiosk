@@ -654,7 +654,7 @@
   </div>
 
   <!-- Version label -->
-  <div id="version-label">v18</div>
+  <div id="version-label">v19</div>
 
 </div>
 
@@ -1143,9 +1143,13 @@ let saverPlayer = null;
 function startSaverVideo() {
   const container = document.getElementById('saver-wistia');
   if (!container) return;
-  // If already playing, just restart
+  // If already initialised, jump to a random point and play
   if (saverPlayer) {
-    try { saverPlayer.time(0); saverPlayer.play(); } catch(e) {}
+    try {
+      var d = saverPlayer.duration();
+      saverPlayer.time(d > 0 ? Math.random() * d : 0);
+      saverPlayer.play();
+    } catch(e) {}
     return;
   }
   container.innerHTML = '';
@@ -1174,6 +1178,9 @@ function startSaverVideo() {
     onReady(video) {
       saverPlayer = video;
       video.mute();
+      // Start at a random point in the video
+      var d = video.duration();
+      if (d > 0) video.time(Math.random() * d);
       video.play();
       try { video.chrome().hide(); } catch(e) {}
     }
