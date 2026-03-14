@@ -127,6 +127,7 @@
   /* Block all Wistia-injected interactive elements in screensaver */
   #saver-wistia, #saver-wistia * { pointer-events:none !important; }
   #saver-wistia iframe { pointer-events:none !important; }
+  #saver-wistia video { object-fit:contain !important; }
 
   /*
   ╔══════════════════════════════════════╗
@@ -654,7 +655,7 @@
   </div>
 
   <!-- Version label -->
-  <div id="version-label">v17</div>
+  <div id="version-label">v18</div>
 
 </div>
 
@@ -1167,8 +1168,7 @@ function startSaverVideo() {
       smallPlayButton:       false,
       volumeControl:         false,
       endVideoBehavior:      'loop',
-      videoFoam:             false,
-      fitStrategy:           'cover',
+      videoFoam:             true,
       silentAutoPlay:        true,
     },
     onReady(video) {
